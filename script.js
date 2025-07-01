@@ -22,29 +22,39 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function deleteLastChar() {
-        // Don't allow deletion if we're showing a result (shouldReset is true)
-        if (shouldReset) return;
-        
-        // Handle deletion from current input
-        if (currInput.length === 1) {
-            currInput = '0';
-        } else {
+        if (shouldReset) {
+            // If we just calculated a result, treat DEL like AC (clear all)
+            resetCalculator();
+            return;
+        }
+
+        // 1. If there's a current input, delete from it first
+        if (currInput.length > 0) {
             currInput = currInput.slice(0, -1);
+            if (currInput === '') currInput = '0'; // Ensure we don't have empty input
         }
-        
-        // Update equation display
-        if (operation === null) {
-            // If no operation is selected, equation is just the current input
-            equationDisplay = currInput;
-        } else if (currInput === '') {
-            // If we deleted all of current input, show just prevInput and operation
-            equationDisplay = prevInput + ' ' + operation;
-        } else {
-            // Show full equation
-            equationDisplay = prevInput + ' ' + operation + ' ' + currInput;
+        // 2. Else if there's an operation, delete it
+        else if (operation !== null) {
+            operation = null;
         }
-        
+        // 3. Else if there's a previous input, delete from it
+        else if (prevInput.length > 0) {
+            prevInput = prevInput.slice(0, -1);
+            if (prevInput === '') prevInput = '0';
+        }
+
+        // Update the equation display to reflect changes
+        updateEquationDisplay();
         updateDisplay();
+    }
+
+    // New helper function to keep equation display in sync
+    function updateEquationDisplay() {
+        if (operation === null) {
+            equationDisplay = prevInput || currInput;
+        } else {
+            equationDisplay = `${prevInput} ${operation} ${currInput}`.trim();
+        }
     }
     
     function appendNumber(number) {
