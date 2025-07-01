@@ -1,7 +1,7 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const display = document.getElementById('display');
     const buttons = document.querySelectorAll('.buttons button');
-    
+
     let currInput = '0';
     let prevInput = '';
     let operation = null;
@@ -9,9 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let equationDisplay = '';
 
     function updateDisplay() {
-        display.value = shouldReset ? currInput : (equationDisplay || currInput);
+        display.value = equationDisplay || currInput;
     }
-    
+
     function resetCalculator() {
         currInput = '0';
         prevInput = '';
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
         equationDisplay = '';
         updateDisplay();
     }
-    
+
     function deleteLastChar() {
         if (shouldReset) {
             resetCalculator();
@@ -39,86 +39,91 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateEquationDisplay() {
         if (operation === null) {
-            equationDisplay = prevInput || currInput;
+            equationDisplay = '';
         } else {
-            equationDisplay = `${prevInput} ${operation} ${currInput}`.trim();
+            equationDisplay = `${prevInput} ${operation} ${currInput}`;
         }
     }
-    
+
     function appendNumber(number) {
         if (shouldReset) {
             resetCalculator();
         }
-        
-        if (currInput === '0' || currInput === '-0') {
+
+        if (currInput === '0') {
             currInput = number;
         } else {
             currInput += number;
         }
-        
+
         updateEquationDisplay();
         updateDisplay();
     }
-    
+
     function appendDecimal() {
         if (shouldReset) {
             resetCalculator();
         }
-        
-        if (currInput.includes('.')) return;
-        
-        currInput = currInput === '' ? '0.' : currInput + '.';
+
+        if (!currInput.includes('.')) {
+            currInput += '.';
+        }
+
         updateEquationDisplay();
         updateDisplay();
     }
-    
+
     function chooseOperation(op) {
         if (operation !== null && currInput !== '') {
             calculate(false);
         }
-        
-        if (currInput !== '' || prevInput !== '') {
-            operation = op;
-            prevInput = currInput === '' ? prevInput : currInput;
-            equationDisplay = prevInput + ' ' + operation;
+
+        if (currInput !== '') {
+            prevInput = currInput;
             currInput = '';
-            shouldReset = false;
-            updateDisplay();
         }
+
+        operation = op;
+        updateEquationDisplay();
+        updateDisplay();
     }
 
     function calculate(finalCalculation = true) {
-        if (operation === null || currInput === '') return;
-        
+        if (operation === null || currInput === '' || prevInput === '') return;
+
         const prev = parseFloat(prevInput);
         const current = parseFloat(currInput);
         let result;
-        
+
         switch (operation) {
-            case '+': result = prev + current; break;
-            case '-': result = prev - current; break;
-            case '*': result = prev * current; break;
-            case '/': 
-                if (current === 0) {
-                    result = "Error";
-                } else {
-                    result = prev / current;
-                }
+            case '+':
+                result = prev + current;
                 break;
-            case '^': 
-                if (prev === 0 && current < 0) {
-                    result = "Error";
-                } else {
-                    result = Math.pow(prev, current);
-                }
+            case '-':
+                result = prev - current;
                 break;
-            default: return;
+            case '*':
+                result = prev * current;
+                break;
+            case '/':
+                result = current === 0 ? 'Error' : prev / current;
+                break;
+            case '^':
+                result = prev === 0 && current < 0 ? 'Error' : Math.pow(prev, current);
+                break;
+            default:
+                return;
         }
-        
+
+        currInput = result.toString();
+        equationDisplay = finalCalculation ? '' : `${prevInput} ${operation} ${currInput}`;
+        prevInput = currInput;
+        operation = null;
         shouldReset = true;
+
         updateDisplay();
     }
-    
+
     // Event listeners
     buttons.forEach(button => {
         button.addEventListener('click', () => {
