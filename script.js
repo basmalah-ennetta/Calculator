@@ -22,17 +22,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function deleteLastChar() {
+        // Don't allow deletion if we're showing a result (shouldReset is true)
         if (shouldReset) return;
         
+        // Handle deletion from current input
         if (currInput.length === 1) {
             currInput = '0';
         } else {
             currInput = currInput.slice(0, -1);
         }
         
+        // Update equation display
         if (operation === null) {
-            equationDisplay = equationDisplay.slice(0, -1);
-            if (equationDisplay === '') equationDisplay = currInput;
+            // If no operation is selected, equation is just the current input
+            equationDisplay = currInput;
+        } else if (currInput === '') {
+            // If we deleted all of current input, show just prevInput and operation
+            equationDisplay = prevInput + ' ' + operation;
+        } else {
+            // Show full equation
+            equationDisplay = prevInput + ' ' + operation + ' ' + currInput;
         }
         
         updateDisplay();
