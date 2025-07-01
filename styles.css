@@ -161,6 +161,7 @@ button:active {
 }
 
 .clear {
+    grid-column: span 2;
     background: var(--blue);
     color: rgba(26, 25, 25, 0.717);
 }
@@ -168,15 +169,6 @@ button:active {
 .clear:hover {
     background: #4a9bbb;
     box-shadow: 0 6px 12px rgba(77, 255, 255, 0.3);
-}
-
-.del {
-    background: #fa8282;
-}
-
-.del:hover {
-    background: #fa8282;
-    box-shadow: 0 6px 12px rgba(255, 107, 107, 0.3);
 }
 
 .equals {

@@ -21,22 +21,6 @@ document.addEventListener('DOMContentLoaded', function () {
         updateDisplay();
     }
 
-    function deleteLastChar() {
-        if (shouldReset) {
-            resetCalculator();
-            return;
-        }
-
-        if (currInput.length > 1) {
-            currInput = currInput.slice(0, -1);
-        } else {
-            currInput = '0';
-        }
-
-        updateEquationDisplay();
-        updateDisplay();
-    }
-
     function updateEquationDisplay() {
         if (operation === null) {
             equationDisplay = '';
@@ -137,8 +121,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 appendDecimal();
             } else if (button.classList.contains('clear')) {
                 resetCalculator();
-            } else if (button.classList.contains('del')) {
-                deleteLastChar();
             }
         });
     });
